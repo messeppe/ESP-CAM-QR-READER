@@ -144,11 +144,6 @@ void ambil_barang(User_session user){
   //Jika pintu masih tertutup
   do{
     Serial.println("Silahkan Buka Pintu");
-    lcd.backlight();
-    lcd.clear
-      while(Serial.available()>0){
-        lcd.write(Serial.read());
-      }
     }
   while(digitalRead(pintu.pin) == LOW);  
 
@@ -165,11 +160,6 @@ void ambil_barang(User_session user){
         while(digitalRead(pintu.pin) == HIGH){   //Perintahkan orang untuk tutup pintu
           ledcWriteTone(channel, 1000);
           Serial.println("Segera Tutup Pintu");
-          lcd.backlight();
-          lcd.clear
-          while(Serial.available()>0){
-            lcd.write(Serial.read());
-          }
           if(pintu.pressed == 1 && digitalRead(pintu.pin) == LOW){
             oldTime = millis();
             pintu.pressed = 0;
@@ -180,21 +170,11 @@ void ambil_barang(User_session user){
       }
       else if(statusAP == 1 && statusANP1 == statusANP1Awal && statusANP2 == statusANP2Awal){    //Apabila alat sudah diambil, perintahkan untuk tertutup
         Serial.println("Silahkan tutup pintu");
-        lcd.backlight();
-          lcd.clear
-          while(Serial.available()>0){
-            lcd.write(Serial.read());
-          }  
         }
       else if(statusANP1 != statusANP1Awal || statusANP2 != statusANP2Awal){                   //Apabila salah ambil, perintahkan untuk taruh kembali
         while(statusANP1 != statusANP1Awal || statusANP2 != statusANP2Awal){
           ledcWriteTone(channel, 1000);
           Serial.println("Kembalikan Alat Yang dipegang!!");
-          lcd.backlight();
-          lcd.clear
-          while(Serial.available()>0){
-            lcd.write(Serial.read());
-          }
           statusANP1 = digitalRead(non_pilihan1);
           statusANP2 = digitalRead(non_pilihan2);
           }
@@ -202,11 +182,6 @@ void ambil_barang(User_session user){
       }
       else{
         Serial.println("Silahkan ambil alat");
-        lcd.backlight();
-          lcd.clear
-          while(Serial.available()>0){
-            lcd.write(Serial.read());
-          }
         } 
       if(pintu.pressed == 1 && digitalRead(pintu.pin) == LOW){   //Apabila pintu tertutup, keluar
         oldTime = millis();
@@ -231,11 +206,6 @@ void taruh_barang(User_session user){
   //Jika pintu masih tertutup
   do{
     Serial.println("Silahkan Buka Pintu");
-    lcd.backlight();
-          lcd.clear
-          while(Serial.available()>0){
-            lcd.write(Serial.read());
-          }
     }
   while(digitalRead(pintu.pin) == LOW);  
 
@@ -252,11 +222,6 @@ void taruh_barang(User_session user){
         while(digitalRead(pintu.pin) == HIGH){   //Perintahkan orang untuk tutup pintu
           ledcWriteTone(channel, 1000);
           Serial.println("Segera Tutup Pintu");
-          lcd.backlight();
-          lcd.clear
-          while(Serial.available()>0){
-            lcd.write(Serial.read());
-          }
           if(pintu.pressed == 1 && digitalRead(pintu.pin) == LOW){
             oldTime = millis();
             pintu.pressed = 0;
@@ -266,22 +231,12 @@ void taruh_barang(User_session user){
         }
       }
       else if(statusAP == 0 && statusANP1 == statusANP1Awal && statusANP2 == statusANP2Awal){    //Apabila alat sudah ditaroh, perintahkan untuk tertutup
-        Serial.println("Silahkan tutup pintu");
-        lcd.backlight();
-          lcd.clear
-          while(Serial.available()>0){
-            lcd.write(Serial.read());
-          }  
+        Serial.println("Silahkan tutup pintu"); 
         }
       else if(statusANP1 != statusANP1Awal || statusANP2 != statusANP2Awal){                   //Apabila salah ambil, perintahkan untuk taruh kembali
         while(statusANP1 != statusANP1Awal || statusANP2 != statusANP2Awal){
           ledcWriteTone(channel, 1000);
           Serial.println("Kembalikan Alat Yang dipegang!!");
-          lcd.backlight();
-          lcd.clear
-          while(Serial.available()>0){
-            lcd.write(Serial.read());
-          }
           statusANP1 = digitalRead(non_pilihan1);
           statusANP2 = digitalRead(non_pilihan2);
           }
@@ -289,11 +244,6 @@ void taruh_barang(User_session user){
       }
       else{
         Serial.println("Silahkan taruh alat");
-        lcd.backlight();
-          lcd.clear
-          while(Serial.available()>0){
-            lcd.write(Serial.read());
-          }
         } 
       if(pintu.pressed == 1 && digitalRead(pintu.pin) == LOW){   //Apabila pintu tertutup, keluar
         oldTime = millis();
@@ -324,6 +274,22 @@ void cek_request(User_session user){
 void loop() {
   Serial.println("start");
   delay(1000);
+
+  //LCD
+  if (Serial.available()) {
+    // Wait a bit for the entire message to arrive
+    delay(100);
+    // Clear the screen
+    lcd.backlight();
+    lcd.clear();
+
+    // Write all characters received with the serial port to the LCD.
+    while (Serial.available() > 0) {
+      lcd.write(Serial.read());
+    }
+    lcd.noBacklight();
+  }
+  
   while(true){
     if(SerialCAM.available() > 0){
     //Create a place to hold the incoming message
@@ -337,11 +303,6 @@ void loop() {
     //Message coming in (check not terminating character/Serial.Println) and guard for over message size
     if( inByte == 'X'){
       Serial.println("Gagal Baca");
-      lcd.backlight();
-          lcd.clear
-          while(Serial.available()>0){
-            lcd.write(Serial.read());
-          }
       //Command untuk esp32cam bisa scan lagi
       Serial.println("sending Command to ESP32CAM");
       SerialCAM.print('0');
@@ -373,11 +334,6 @@ void loop() {
             
         //Udah dapet data user, cek requestnya apa, pindah fungsi biar gampang
         Serial.println("User Detected");
-        lcd.backlight();
-          lcd.clear
-          while(Serial.available()>0){
-            lcd.write(Serial.read());
-          }
         delay(1000);
         cek_request(current_user);
         digitalWrite(FLASH_GPIO_NUM, HIGH);
